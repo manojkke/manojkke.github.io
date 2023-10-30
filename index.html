@@ -110,11 +110,18 @@
           dataSource: "Cluster0",
         }),
       }).done(function (response) {
-        allNewsData = response.documents; 
+        allNewsData = response.documents;
 
         var todayDate = getDateFormat(new Date());
+
+        var yesterDa = new Date();
+        yesterDa.setDate(yesterDa.getDate() - 1);
+        var yesterDate = getDateFormat(yesterDa);
+
+
+
         allNewsData = allNewsData.filter(function (v) {
-          return v.DateOn == todayDate;
+          return v.DateOn == todayDate || v.DateOn == yesterDate;
         });
         drawNewsContent(allNewsData);
       });
@@ -229,9 +236,9 @@
             newsDetail_HTM += "  <div> <span style='background-color: blue;color:white'>  Up / Down Words </span>:   " + curNSDet.UpgradeDownGradeWords.join() + "</div>";
         }
 
-        var htm = '<div class="col-lg-4 col-sm-12" id="newsSymbol-' + currentNs.Symbol.replace(":", "") + '" style="padding: 5px;">';
-        htm += '<button class="btn" type="button" data-toggle="collapse" data-target="#collapseExample-' + currentNs.Symbol.replace(":", "") + '" aria-expanded="false" style="width: 100%" > ' + symbolStringForButton + "</button>";
-        htm += ' <div style="padding: 20px;" class="collapse" id="collapseExample-' + currentNs.Symbol.replace(":", "") + '">';
+        var htm = '<div class="col-lg-4 col-sm-12" id="newsSymbol-' + currentNs.Symbol.replace(":", "") + currentNs.DateOn + '" style="padding: 5px;">';
+        htm += '<button class="btn" type="button" data-toggle="collapse" data-target="#collapseExample-' + currentNs.Symbol.replace(":", "") + currentNs.DateOn + '" aria-expanded="false" style="width: 100%" > ' + symbolStringForButton + "</button>";
+        htm += ' <div style="padding: 20px;" class="collapse" id="collapseExample-' + currentNs.Symbol.replace(":", "") + + currentNs.DateOn + '">';
         htm += newsDetail_HTM;
         htm += " </div>";
         htm += "</div>";
