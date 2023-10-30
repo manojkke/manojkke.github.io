@@ -19,9 +19,10 @@
 
 <body style="font-size: 17px">
   <div>
-    <button style="width: 100%; height: 40px" onclick="getNewsData()">
-      Refresh Data
-    </button>
+    <button style="width: 100%; height: 40px" onclick="getNewsData()"> Refresh Data </button>
+
+    <button style="width: 45%; height: 40px" onclick="filterTodaysData()"> Todays Data </button>
+    <button style="width: 45%; height: 40px" onclick="filteryesterdaysData()"> Yesterdays Data </button>
 
     <input type="text" id="todaysEarningCalalderSymbols" name="todaysEarningCalalderSymbols" style="width: 100%;" />
     <input type="text" id="tomorrowsEarningCalalderSymbols" name="tomorrowsEarningCalalderSymbols"
@@ -37,9 +38,7 @@
         </button>
 
         <div class="collapse" id="collapseExample-Sym1">
-          <div>Anim pariatur cliche</div>
-          <div>cliche reprehenderit</div>
-        </div>
+          Loading . . . . . . . </div>
       </div>
     </div>
   </div>
@@ -55,8 +54,9 @@
     // document.getElementsByTagName("head")[0].appendChild(script);
 
     var currentAccessToken = null;
+    var allNewsDataWithOutAnyFilter = [];
 
-    var allNewsData = [];
+    var currentNewsData = [];
 
     var allEarningCalanderData = [];
 
@@ -74,7 +74,26 @@
       return dateString;
     }
 
+    function filterTodaysData() {
+      var todayDate = getDateFormat(new Date()); 
 
+      currentNewsData = allNewsDataWithOutAnyFilter.filter(function (v) {
+        return v.DateOn == todayDate;
+      });
+      drawNewsContent(currentNewsData);
+    }
+
+    function filteryesterdaysData() {
+ 
+      var yesterDa = new Date();
+      yesterDa.setDate(yesterDa.getDate() - 1);
+      var yesterDate = getDateFormat(yesterDa);
+ 
+      currentNewsData = allNewsDataWithOutAnyFilter.filter(function (v) {
+        return v.DateOn == yesterDate;
+      });
+      drawNewsContent(currentNewsData);
+    }
 
 
     function GetAccessToken() {
@@ -110,7 +129,7 @@
           dataSource: "Cluster0",
         }),
       }).done(function (response) {
-        allNewsData = response.documents;
+        allNewsDataWithOutAnyFilter = response.documents;
 
         var todayDate = getDateFormat(new Date());
 
@@ -120,10 +139,10 @@
 
 
 
-        allNewsData = allNewsData.filter(function (v) {
+        currentNewsData = allNewsDataWithOutAnyFilter.filter(function (v) {
           return v.DateOn == todayDate || v.DateOn == yesterDate;
         });
-        drawNewsContent(allNewsData);
+        drawNewsContent(currentNewsData);
       });
     }
 
@@ -188,7 +207,7 @@
         //
 
 
-        drawNewsContent(allNewsData);
+        drawNewsContent(currentNewsData);
       });
     }
 
