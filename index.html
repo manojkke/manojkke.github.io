@@ -19,10 +19,23 @@
 
 <body style="font-size: 17px">
   <div>
-    <button style="width: 100%; height: 40px" onclick="getNewsData()"> Refresh Data </button>
+    <button style="width: 100%; height: 40px" onclick="getNewsData();"> Refresh Data
+    </button>
+    <div style="padding: 10px;"> </div>
+    <button style="width: 49%; height: 40px" onclick="filterTodaysData()"> Todays Data </button>
+    <button style="width: 49%; height: 40px" onclick="filteryesterdaysData()"> Yesterdays Data </button>
+    <div style="padding: 10px;"> </div>
 
-    <button style="width: 45%; height: 40px" onclick="filterTodaysData()"> Todays Data </button>
-    <button style="width: 45%; height: 40px" onclick="filteryesterdaysData()"> Yesterdays Data </button>
+    <button style="width: 49%; height: 40px" onclick="sortMainDataUsingOrder('EarningCalanderToday')"> Ear Cal Today
+    </button>
+    <button style="width: 49%; height: 40px" onclick="sortMainDataUsingOrder('EarningCalenderTomorrow')"> Ear Cal
+      Tomorrow </button>
+    <button style="width: 49%; height: 40px" onclick="sortMainDataUsingOrder('EarningCalenderPast')"> Ear Cal Past
+    </button>
+    <button style="width: 49%; height: 40px" onclick="sortMainDataUsingOrder('PositiveScore')"> Positive Score </button>
+    <button style="width: 49%; height: 40px" onclick="sortMainDataUsingOrder('NegativeScore')"> Negative Score </button>
+    <button style="width: 49%; height: 40px" onclick="sortMainDataUsingOrder('UpgradeDownGrade')"> U / D Sorting
+    </button>
 
     <input type="text" id="todaysEarningCalalderSymbols" name="todaysEarningCalalderSymbols" style="width: 100%;" />
     <input type="text" id="tomorrowsEarningCalalderSymbols" name="tomorrowsEarningCalalderSymbols"
@@ -75,7 +88,7 @@
     }
 
     function filterTodaysData() {
-      var todayDate = getDateFormat(new Date()); 
+      var todayDate = getDateFormat(new Date());
 
       currentNewsData = allNewsDataWithOutAnyFilter.filter(function (v) {
         return v.DateOn == todayDate;
@@ -84,11 +97,11 @@
     }
 
     function filteryesterdaysData() {
- 
+
       var yesterDa = new Date();
       yesterDa.setDate(yesterDa.getDate() - 1);
       var yesterDate = getDateFormat(yesterDa);
- 
+
       currentNewsData = allNewsDataWithOutAnyFilter.filter(function (v) {
         return v.DateOn == yesterDate;
       });
@@ -110,8 +123,7 @@
         currentAccessToken = response.access_token;
         console.log(response);
         getNewsData();
-        getEarningCalanderSymbols();
-      });
+       });
     }
 
     function getNewsData() {
@@ -143,6 +155,7 @@
           return v.DateOn == todayDate || v.DateOn == yesterDate;
         });
         drawNewsContent(currentNewsData);
+        getEarningCalanderSymbols();
       });
     }
 
@@ -163,11 +176,7 @@
       }).done(function (response) {
         allEarningCalanderData = response.documents;
 
-        //     todaysEarningCalalderSymbols
-        // tomorrowsEarningCalalderSymbols
-        // pastEarningCalalderSymbols
 
-        //
         var todayDate = getDateFormat(new Date());
         var todayCalData = allEarningCalanderData.filter(function (v) {
           return v.DateOn == todayDate;
@@ -204,9 +213,32 @@
           pastEarningCalalderSymbols = yesterCalData[0].Symbols;
         $('#pastEarningCalalderSymbols').val(pastEarningCalalderSymbols.toString());
 
-        //
+        // 
+        todaysEarningCalalderSymbols = $('#todaysEarningCalalderSymbols').val().split(',');
+        tomorrowsEarningCalalderSymbols = $('#tomorrowsEarningCalalderSymbols').val().split(',');
+        pastEarningCalalderSymbols = $('#pastEarningCalalderSymbols').val().split(',');
 
+        var calculatedData = [];
+        for (var n = 0; n < currentNewsData.length; n++) {
+          var currentNs = currentNewsData[n];
+          currentNs.isECToday = 0;
+          currentNs.isECTomorrow = 0;
+          currentNs.isECPast = 0;
 
+          var curSymbolTrimmed = currentNs.Symbol.replace("NYSE", "").replace("NASDAQ", "").replace(":", "");
+          if (todaysEarningCalalderSymbols.indexOf(curSymbolTrimmed) > -1)
+            currentNs.isECToday = 1;
+
+          if (tomorrowsEarningCalalderSymbols.indexOf(curSymbolTrimmed) > -1)
+            currentNs.isECTomorrow = 1;
+
+          if (pastEarningCalalderSymbols.indexOf(curSymbolTrimmed) > -1)
+            currentNs.isECPast = 1;
+
+          calculatedData.push(currentNs);
+
+        }
+        currentNewsData = calculatedData;
         drawNewsContent(currentNewsData);
       });
     }
@@ -280,30 +312,70 @@
       GetAccessToken();
     });
 
+    //sortMainDataUsingOrder('PositiveScore')  NegativeScore  UpgradeDownGrade  EarningCalanderToday  EarningCalenderTomorrow  EarningCalenderPast      
     function sortMainDataUsingOrder(sortType) {
       if (sortType == 'PositiveScore') {
         function PositiveScoreSort(a, b) {
-          var aName = a.numberOfChange;
-          var bName = b.numberOfChange;
-          return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+          var aName = a.PositiveScore;
+          var bName = b.PositiveScore;
+          return ((aName > bName) ? -1 : ((aName < bName) ? 1 : 0));
         }
+        currentNewsData = currentNewsData.sort(PositiveScoreSort);
+        drawNewsContent(currentNewsData);
       }
 
       if (sortType == 'NegativeScore') {
         function NegativeScoreSort(a, b) {
-          var aName = a.numberOfChange;
-          var bName = b.numberOfChange;
-          return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+          var aName = a.NegativeScore;
+          var bName = b.NegativeScore;
+          return ((aName > bName) ? -1 : ((aName < bName) ? 1 : 0));
         }
+        currentNewsData = currentNewsData.sort(NegativeScoreSort);
+        drawNewsContent(currentNewsData);
+
+      }
+      if (sortType == 'UpgradeDownGrade') {
+        function UpgradeDownGradeSort(a, b) {
+          var aName = a.UpgradeDownGradeScore;
+          var bName = b.UpgradeDownGradeScore;
+          return ((aName > bName) ? -1 : ((aName < bName) ? 1 : 0));
+        }
+        currentNewsData = currentNewsData.sort(UpgradeDownGradeSort);
+        drawNewsContent(currentNewsData);
+
       }
 
-
-      if (sortType == 'EarningCalander') {
+      if (sortType == 'EarningCalanderToday') {
         function EarningCalanderSort(a, b) {
-          var aName = a.numberOfChange;
-          var bName = b.numberOfChange;
-          return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+          var aName = a.isECToday;
+          var bName = b.isECToday;
+          return ((aName > bName) ? -1 : ((aName < bName) ? 1 : 0));
         }
+        currentNewsData = currentNewsData.sort(EarningCalanderSort);
+
+        drawNewsContent(currentNewsData);
+      }
+
+      if (sortType == 'EarningCalenderTomorrow') {
+        function EarningCalanderSort(a, b) {
+          var aName = a.isECTomorrow;
+          var bName = b.isECTomorrow;
+          return ((aName > bName) ? -1 : ((aName < bName) ? 1 : 0));
+        }
+        currentNewsData = currentNewsData.sort(EarningCalanderSort);
+
+        drawNewsContent(currentNewsData);
+      }
+
+      if (sortType == 'EarningCalenderPast') {
+        function EarningCalanderSort(a, b) {
+          var aName = a.isECPast;
+          var bName = b.isECPast;
+          return ((aName > bName) ? -1 : ((aName < bName) ? 1 : 0));
+        }
+        currentNewsData = currentNewsData.sort(EarningCalanderSort);
+        drawNewsContent(currentNewsData);
+
       }
     }
 
