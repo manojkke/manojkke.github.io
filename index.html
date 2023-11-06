@@ -171,20 +171,12 @@
 
     function getNewsData() {
       $.ajax({
-        url: "https://ap-southeast-1.aws.data.mongodb-api.com/app/data-yyhzg/endpoint/data/v1/action/find",
-        crossDomain: true,
-        method: "post",
-        headers: {
-          Authorization: "Bearer " + currentAccessToken,
-        },
-        contentType: "application/json",
-        data: JSON.stringify({
-          collection: "NewsCollection",
-          database: "Trading_news",
-          dataSource: "Cluster0",
-        }),
+        url: "https://marketdataextract-dev.eba-qiyywxay.ap-southeast-1.elasticbeanstalk.com/GetAllNewsCollection",
+         method: "get", 
+        timeout : 20000,
+        contentType: "application/json", 
       }).done(function (response) {
-        allNewsDataWithOutAnyFilter = response.documents;
+        allNewsDataWithOutAnyFilter = response;
 
         var todayDate = getDateFormat(new Date());
 
@@ -202,20 +194,12 @@
 
     function getEarningCalanderSymbols() {
       $.ajax({
-        url: "https://ap-southeast-1.aws.data.mongodb-api.com/app/data-yyhzg/endpoint/data/v1/action/find",
-        crossDomain: true,
-        method: "post",
-        headers: {
-          Authorization: "Bearer " + currentAccessToken,
-        },
-        contentType: "application/json",
-        data: JSON.stringify({
-          collection: "EarningCalanderSymbols",
-          database: "Trading_news",
-          dataSource: "Cluster0",
-        }),
+        url: "http://marketdataextract-dev.eba-qiyywxay.ap-southeast-1.elasticbeanstalk.com/GetAllEarningCalanerFromDB",
+         timeout : 20000,
+        method: "get", 
+        contentType: "application/json"
       }).done(function (response) {
-        allEarningCalanderData = response.documents;
+        allEarningCalanderData = response;
 
         var todayDate = getDateFormat(new Date());
         var todayCalData = allEarningCalanderData.filter(function (v) {
@@ -420,7 +404,7 @@
     }
 
     executeInJqueryLoaded(function () {
-      GetAccessToken();
+      getNewsData();
     });
 
     //sortMainDataUsingOrder('PositiveScore')  NegativeScore  UpgradeDownGrade  EarningCalanderToday  EarningCalenderTomorrow  EarningCalenderPast
