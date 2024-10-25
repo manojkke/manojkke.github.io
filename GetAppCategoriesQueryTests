@@ -1,0 +1,60 @@
+    [Collection("TestCollection")]
+    public class GetAppCategoriesQueryTests
+    {
+        private readonly Mock<IRefitClientFactory> _client;
+        private readonly IAppCategoryStatsRepository _repo;
+        private readonly IMapper _mapper;
+
+        public GetAppCategoriesQueryTests(BaseFixture fixture)
+        {
+            _client = fixture.MockIInfraAssetsDeviceClientFactory();
+            _repo = fixture.GetAppCategoryStatsRepository();
+            _mapper = fixture._mapper;
+        }
+
+        [Theory]
+        [ClassData(typeof(GetAppCategoriesQueryTheory))]
+        public async Task GetAppCategories_ShouldNotReturnNull_WhenValidRequest(GetAppCategoriesQuery query)
+        {
+            GetAppCategoriesQueryHandler handler = new GetAppCategoriesQueryHandler(_client.Object, _mapper, _repo);
+            var x = await handler.Handle(query, new System.Threading.CancellationToken());
+            Assert.NotNull(x);
+        }
+
+        [Fact]
+        public async Task GetAppCategories_ShouldReturnMetrics_WhenHasMetrics()
+        {
+            var query = new GetAppCategoriesQuery("Test", "Test", "token")
+            {
+                ServiceRefNo = "CPCPE12345425",
+                Interval = new BaseQuery.Interval()
+                {
+                    Start = 1589904043000,
+                    End = 1589990443000
+                },
+                Metrics = new List<MetricQuery>() { new MetricQuery { Property = "bytesRx", Type = AggregationType.Sum.Name },
+                                                    new MetricQuery { Property = "bytesTx", Type = AggregationType.Sum.Name }}
+            };
+            GetAppCategoriesQueryHandler handler = new GetAppCategoriesQueryHandler(_client.Object, _mapper, _repo);
+            var x = await handler.Handle(query, new System.Threading.CancellationToken());
+            Assert.NotNull(x.Items);
+        }
+
+        [Theory]
+        [ClassData(typeof(GetAppCategoriesQueryTheory))]
+        public async Task GetAppCategories_ShouldReturnTrue_WhenValidRequest(GetAppCategoriesQuery query)
+        {
+            var validator = new GetAppCategoriesQueryValidator();
+            var validationResult = await validator.ValidateAsync(query);
+            Assert.True(validationResult.IsValid);
+        }
+
+        [Theory]
+        [ClassData(typeof(GetAppCategoriesQueryInvalidTheory))]
+        public async Task GetAppCategories_ShouldReturnFalse_WhenInvalidRequest(GetAppCategoriesQuery query)
+        {
+            var validator = new GetAppCategoriesQueryValidator();
+            var validationResult = await validator.ValidateAsync(query);
+            Assert.False(validationResult.IsValid);
+        }
+    }
