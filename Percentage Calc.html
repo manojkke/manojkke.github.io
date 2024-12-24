@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<style>
+  .percentage_container {
+    border-bottom: 1px solid green;
+    width: 200px;
+    padding: 3px;
+  }
+</style>
+
+<body>
+  <div style="margin-top: 9%; width: 50;">
+    <div>
+      <div>
+        <div class="percentage_container">9 % : <span class="valueHolder " id="P_9">  </span></div>
+        <div class="percentage_container">8 % : <span class="valueHolder " id="P_8">  </span></div>
+        <div class="percentage_container">7 % : <span class="valueHolder " id="P_7">  </span></div>
+        <div class="percentage_container">6 % : <span class="valueHolder " id="P_6">  </span></div> 
+        <div class="percentage_container">4 % : <span class="valueHolder " id="P_4"> </span></div>
+        <div class="percentage_container">3 % : <span class="valueHolder " id="P_3"> </span></div>
+        <div class="percentage_container">2 % : <span class="valueHolder " id="P_2"> </span></div>
+        <div class="percentage_container">1 % : <span class="valueHolder " id="P_1"> </span></div>
+        <div  style="background-color: rgb(142, 171, 172);"  class="percentage_container">10 % : <span class="valueHolder" id="P_10"> </span></div>
+        <div style="background-color: aquamarine;" class="percentage_container">5 % : <span class="valueHolder " id="P_5"> </span></div>
+        <div style="margin: 12px;">
+          <input type="number" id="broughtValue" onchange="valueEntres()" />
+        </div>
+        <div  style="background-color: aquamarine;"   class="percentage_container">5 % : <span class="valueHolder " id="M_5">  </span></div>
+        <div  style="background-color: rgb(142, 171, 172);"  class="percentage_container">10 % : <span class="valueHolder" id="M_10">  </span></div>
+        <div class="percentage_container">1 % : <span class="valueHolder " id="M_1">  </span></div>
+        <div class="percentage_container">2 % : <span class="valueHolder " id="M_2">  </span></div>
+        <div class="percentage_container">3 % : <span class="valueHolder " id="M_3"> </span></div>
+        <div class="percentage_container">4 % : <span class="valueHolder " id="M_4"> </span></div> 
+        <div class="percentage_container">6 % : <span class="valueHolder " id="M_6"> </span></div>
+        <div class="percentage_container">7 % : <span class="valueHolder " id="M_7"> </span></div>
+        <div class="percentage_container">8 % : <span class="valueHolder " id="M_8"> </span></div>
+        <div class="percentage_container">9 % : <span class="valueHolder " id="M_9"> </span></div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  function valueEntres() {
+    var broughtValue = document.getElementById('broughtValue').value * 1;
+
+    if (!isNaN(broughtValue)) {
+      const valueHolder = document.querySelectorAll('.valueHolder');
+      valueHolder.forEach((element) => {
+        element.innerText = '';
+      });
+
+      var percentage_1 = (1 / 100) * broughtValue;
+      var percentage_2 = (2 / 100) * broughtValue;
+      var percentage_3 = (3 / 100) * broughtValue;
+      var percentage_4 = (4 / 100) * broughtValue;
+      var percentage_5 = (5 / 100) * broughtValue;
+      var percentage_6 = (6 / 100) * broughtValue;
+      var percentage_7 = (7 / 100) * broughtValue;
+      var percentage_8 = (8 / 100) * broughtValue;
+      var percentage_9 = (9 / 100) * broughtValue;
+      var percentage_10 = (10 / 100) * broughtValue;
+
+      document.getElementById('P_1').innerText = broughtValue + percentage_1; 
+      document.getElementById('P_2').innerText = broughtValue + percentage_2; 
+      document.getElementById('P_3').innerText = broughtValue + percentage_3; 
+      document.getElementById('P_4').innerText = broughtValue + percentage_4; 
+      document.getElementById('P_5').innerText = broughtValue + percentage_5; 
+      document.getElementById('P_6').innerText = broughtValue + percentage_6; 
+      document.getElementById('P_7').innerText = broughtValue + percentage_7; 
+      document.getElementById('P_8').innerText = broughtValue + percentage_8; 
+      document.getElementById('P_9').innerText = broughtValue + percentage_9; 
+      document.getElementById('P_10').innerText = broughtValue + percentage_10; 
+ 
+      document.getElementById('M_1').innerText = broughtValue - percentage_1; 
+      document.getElementById('M_2').innerText = broughtValue - percentage_2; 
+      document.getElementById('M_3').innerText = broughtValue - percentage_3; 
+      document.getElementById('M_4').innerText = broughtValue - percentage_4; 
+      document.getElementById('M_5').innerText = broughtValue - percentage_5; 
+      document.getElementById('M_6').innerText = broughtValue - percentage_6; 
+      document.getElementById('M_7').innerText = broughtValue - percentage_7; 
+      document.getElementById('M_8').innerText = broughtValue - percentage_8; 
+      document.getElementById('M_9').innerText = broughtValue - percentage_9; 
+      document.getElementById('M_10').innerText = broughtValue - percentage_10; 
+
+    }
+  }
+</script>
+
+</html>
